@@ -1,0 +1,63 @@
+version: '3.9'
+
+services:
+
+  mongo1:
+    image: mongo:4.4
+    container_name: mongo1
+    hostname: mongo
+    expose:
+      - 27017
+    ports:
+      - 27017:27017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+    depends_on:
+      - mongo2
+      - mongo3
+    links:
+      - mongo2
+      - mongo3
+    volumes:
+      - ./scripts/rs-init.sh:/scripts/rs-init.sh
+      - ./scripts/init.js:/scripts/init.js
+      - mongo-4.4:/data/db:rw,cached # remove ",cached if you are on linux or windows".
+    networks:
+      - mongo-network
+
+  mongo2:
+    image: mongo:4.4
+    container_name: mongo2
+    hostname: mongo
+    expose:
+      - 27017
+    ports:
+      - 27018:27017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+    volumes:
+      - mongo-4.4:/data/db:rw,cached # remove ",cached if you are on linux or windows".
+    networks:
+      - mongo-network
+
+  mongo3:
+    image: mongo:4.4
+    container_name: mongo2
+    hostname: mongo
+    expose:
+      - 27017
+    ports:
+      - 27018:27017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+    volumes:
+      - mongo-4.4:/data/db:rw,cached # remove ",cached if you are on linux or windows".
+    networks:
+      - mongo-network
+
+  networks:
+    mongo-network:
+      driver: bridge
+
+  volumes:
+    mongo-4.4:

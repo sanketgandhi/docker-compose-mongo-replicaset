@@ -1,2 +1,3 @@
-# docker-compose-mongo-replicaset
-Docker compose mongo replicaset setup
+# Mongo Replicaset Setup using Docker Compose
+
+Check code :)
